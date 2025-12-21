@@ -53,24 +53,24 @@
     <div id="messaggio"></div>
 
     <script>
-        document.getElementById('formRegistrazione').addEventListener('submit', async function(e) {
+        document.getElementById('formRegistrazione').addEventListener('submit', function (e) {
             e.preventDefault();
-            
+
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             const messaggio = document.getElementById('messaggio');
-            
-            try {
-                const response = await fetch('registrazione.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ username, password })
-                });
-                
-                const data = await response.json();
-                
+
+            fetch('registrazione.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username: username, password: password })
+            })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
                 if (data.success) {
                     messaggio.className = 'successo';
                     messaggio.textContent = data.message;
@@ -79,10 +79,11 @@
                     messaggio.className = 'errore';
                     messaggio.textContent = data.message;
                 }
-            } catch (error) {
+            })
+            .catch(function () {
                 messaggio.className = 'errore';
                 messaggio.textContent = 'Errore di connessione al server';
-            }
+            });
         });
     </script>
 </body>
