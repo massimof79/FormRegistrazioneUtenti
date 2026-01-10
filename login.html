@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            background-color: #ffffff;
+            padding: 2rem;
+            width: 100%;
+            max-width: 380px;
+            border-radius: 6px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.6rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 0.7rem;
+            background-color: #2f80ed;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #2568c9;
+        }
+
+        .message {
+            margin-top: 1rem;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .error {
+            color: #c0392b;
+        }
+
+        .success {
+            color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <h1>Accesso</h1>
+
+    <form id="loginForm">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+
+        <button type="submit">Login</button>
+    </form>
+
+    <div id="message" class="message"></div>
+</div>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const messageBox = document.getElementById('message');
+        messageBox.textContent = '';
+        messageBox.className = 'message';
+
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
+
+        try {
+          /*await
+            Blocca solo la funzione async corrente fino a quando:
+            - la richiesta HTTP è completata
+            - la risposta è arrivata dal server
+          */
+            const response = await fetch('login.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            });
+          
+            /*Dopo che la risposta è arrivata recupero il risultato*/
+            const result = await response.json();
+
+            if (result.success) {
+                messageBox.textContent = result.message;
+                messageBox.classList.add('success');
+
+                // esempio di redirect
+                // window.location.href = 'dashboard.php';
+            } else {
+                messageBox.textContent = result.message;
+                messageBox.classList.add('error');
+            }
+
+        } catch (error) {
+            messageBox.textContent = 'Errore di comunicazione con il server';
+            messageBox.classList.add('error');
+        }
+    });
+</script>
+
+</body>
+</html>
