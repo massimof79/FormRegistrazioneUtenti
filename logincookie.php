@@ -1,6 +1,15 @@
 <?php
 header('Content-Type: application/json');
 
+/* Verifica se l'utente è già loggato tramite cookie */
+if (isset($_COOKIE['username']) && isset($_COOKIE['password'])) {
+    echo json_encode([
+        'success' => false,
+        'message' => 'Utente già loggato a sistema'
+    ]);
+    exit;
+}
+
 $pdo = new PDO(
     'mysql:host=localhost;dbname=nome_db;charset=utf8mb4',
     'db_user',
@@ -28,14 +37,11 @@ if (!$user || !password_verify($password, $user['password_hash'])) {
     exit;
 }
 
-// Cookie: username + password (hashata)
-if ($remember) {
-    setcookie('username', $username, time() + 86400 * 30, '/', '', false, true);
-    setcookie('password', $password, time() + 86400 * 30, '/', '', false, true);
-} else {
-    setcookie('username', $username, 0, '/', '', false, true);
-    setcookie('password', $password, 0, '/', '', false, true);
-}
+/* Impostazione cookie */
+$expire = $remember ? time() + 86400 * 30 : 0;
+
+setcookie('username', $username, $expire, '/', '', false, true);
+setcookie('password', $password, $expire, '/', '', false, true);
 
 echo json_encode([
     'success' => true,
