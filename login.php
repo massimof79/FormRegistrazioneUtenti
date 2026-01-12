@@ -1,5 +1,5 @@
 <?php
-session_start();
+//session_start();
 header('Content-Type: application/json');
 
 // Configurazione database
@@ -35,8 +35,8 @@ try {
     // Verifica password
     if ($utente && password_verify($password, $utente['password'])) {
         // Login riuscito
-        $_SESSION['user_id'] = $utente['id'];
-        $_SESSION['username'] = $utente['username'];
+       // $_SESSION['user_id'] = $utente['id'];
+       // $_SESSION['username'] = $utente['username'];
         
         echo json_encode([
             'success' => true, 
